@@ -1,10 +1,10 @@
-import { useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationsList from "./ConversationList";
 import ConversationOperations from "@/src/graphql/operations/conversation";
 import { ConverationData } from "@/src/util/types";
-import { ConversationPopulated } from "@/../backend/src/util/types";
+import { ConversationPopulated, ParticipantPopulated } from "@/../backend/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "../../common/SkeletonLoader";
@@ -15,19 +15,29 @@ interface IConversationsWrapperProps {
 const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
   session,
 }) => {
+  const router = useRouter();
+  const {
+    query: { conversationId },
+  } = router;
+
+  const{user:{id :userId}} = session;
+
   const {
     data: conversationsData,
     error: conversationsError,
     loading: conversationsLoading,
     subscribeToMore,
-  } = useQuery<ConverationData, {}>(
-    ConversationOperations.Query.conversations
-  );
-  const router = useRouter();
-  const {
-    query: { conversationId },
-  } = router;
-  const onViewConversation = async (conversationId: string) => {
+  } = useQuery<ConverationData, {}>(ConversationOperations.Query.conversations);
+
+  const [markconversationAsRead] = useMutation<
+    { markConversationAsRead: boolean },
+    { userId: string; conversationId: string }
+  >(ConversationOperations.Mutations.markConversationAsRead);
+
+  const onViewConversation = async (
+    conversationId: string,
+    hasSeenLatestMessage: boolean | undefined
+  ) => {
     /**
      * 1. push the conversationId to route query params
      */
@@ -35,6 +45,73 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
     /**
      * 2, Mark the conversation as read
      */
+
+    if (hasSeenLatestMessage) return;
+    //markconversationAsRead mutation
+    try {
+      await markconversationAsRead({
+        variables:{
+          userId,
+          conversationId,
+        },
+        optimisticResponse: {
+          markConversationAsRead: true,
+        },
+        update: (cache) => {
+          /**
+           * Get conversation participants from cache
+           */
+          const participantsFragment = cache.readFragment<{ participants: Array<ParticipantPopulated>}>({
+            id: `Conversation:${conversationId}`,
+            fragment: gql`
+              fragment Participants on Conversation {
+                participants {
+                  user {
+                    id
+                    username
+                  }
+                  hasSeenLatestMessage
+                }
+              }
+            `
+          });
+
+          if(!participantsFragment) return;
+
+          const participants = [...participantsFragment.participants];
+          
+          const userParticipantIdx = participants.findIndex(p => p.user.id === userId);
+          
+          if(userParticipantIdx === -1)return;
+
+          const userParticipant = participants[userParticipantIdx];
+          /**
+           * Update participant to show latest message as read
+           */
+          participants[userParticipantIdx] = {
+            ...userParticipant,
+            hasSeenLatestMessage: true,
+          };
+
+          /**
+           * update the cache
+           */
+          cache.writeFragment({
+            id:`Conversation:${conversationId}`,
+            fragment: gql`
+              fragment UUpdatedParticipant on Conversation {
+                participants
+              }
+            `,
+            data: {
+              participants
+            }
+          })
+        }
+      })
+    }catch(error) {
+      console.log("onViewConversationError:👁️",error)
+    }
   };
   console.log("HERE IS DATA FROM CONVERSATIONWRAPPER:📬", conversationsData);
   const subscribeToNewConversations = () => {
@@ -75,9 +152,9 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
       px={3}
     >
       {conversationsLoading ? (
-        <SkeletonLoader count={7} height="80px"/>
-        // <div>Loading</div>
+        <SkeletonLoader count={7} height="80px" />
       ) : (
+        // <div>Loading</div>
         <ConversationsList
           session={session}
           conversations={conversationsData?.conversations || []}

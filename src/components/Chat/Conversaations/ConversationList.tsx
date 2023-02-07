@@ -9,7 +9,10 @@ import ConversationModal from "./Modal/Modal";
 interface IConversationsListProps {
   session: Session;
   conversations: Array<ConversationPopulated>;
-  onViewConversation: (conversationId: string) => void;
+  onViewConversation: (
+    conversationId: string,
+    hasSeenLatestMessage: boolean | undefined,
+  ) => void;
 }
 
 const ConversationsList: React.FunctionComponent<IConversationsListProps> = ({
@@ -41,19 +44,29 @@ const ConversationsList: React.FunctionComponent<IConversationsListProps> = ({
         </Text>
       </Box>
       <ConversationModal session={session} isOpen={isOpen} onClose={onClose} />
-      {conversations.map((conversation) => (
-        <ConversationItem
-          userId={userId}
-          onClick={() => onViewConversation(conversation.id)}
-          key={conversation.id}
-          conversation={conversation}
-          isSelected={conversation.id === router.query.conversationId}
-          // hasSeenLatestMessage={undefined}
-          // onDeleteConversation={function (conversationId: string): void {
-          //   throw new Error("Function not implemented.");
-          // }}
-        />
-      ))}
+      {conversations.map((conversation) => {
+        const participant = conversation.participants.find(
+          (p) => p.user.id === userId
+        );
+        return (
+          <ConversationItem
+            userId={userId}
+            onClick={() =>
+              onViewConversation(
+                conversation.id,
+                participant?.hasSeenLatestMessage
+              )
+            }
+            key={conversation.id}
+            conversation={conversation}
+            isSelected={conversation.id === router.query.conversationId}
+            hasSeenLatestMessage={participant?.hasSeenLatestMessage}
+            // onDeleteConversation={function (conversationId: string): void {
+            //   throw new Error("Function not implemented.");
+            // }}
+          />
+        );
+      })}
     </Box>
   );
 };

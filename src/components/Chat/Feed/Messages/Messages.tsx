@@ -49,6 +49,7 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
   useEffect(() => {
     subscribeToMoreMessages(conversationId);
   }, [conversationId]);
+  
   if (error) return null;
   return (
     <Flex direction={"column"} justify="flex-end" overflow={"hidden"}>

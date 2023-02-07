@@ -13,7 +13,7 @@ const ConversationFields = `
     latestMessage {
       ${MessageFields}
     }
-    updatedAt
+    updateAt
 `;
 export default {
   Query: {
@@ -31,6 +31,14 @@ export default {
         createConversation(participantIds: $participantIds) {
           conversationId
         }
+      }
+    `,
+    markConversationAsRead: gql`
+      mutation MarkConversationAsRead(
+        $userId: String!
+        $conversationId: String!
+      ) {
+        markConversationAsRead(userId: $userId, conversationId: $conversationId)
       }
     `,
   },
