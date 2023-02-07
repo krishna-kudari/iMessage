@@ -21,7 +21,7 @@ import { formatUsernames } from "@/src/util/functions";
 
 const formatRelativeLocale = {
   lastWeek: "eeee",
-  yesterday: "'Yesterday",
+  yesterday: "'Yesterday'",
   today: "p",
   other: "MM/dd/yy",
 };
@@ -127,7 +127,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           <GoPrimitiveDot fontSize={18} color="#6B46C1" />
         )}
       </Flex> */}
-      <Avatar />
+      <Avatar name={conversation.participants[0].user.username} />
       <Flex justify="space-between" width="80%" height="100%">
         <Flex direction="column" width="70%" height="100%">
           <Text

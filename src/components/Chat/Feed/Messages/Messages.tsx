@@ -28,8 +28,7 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
       toast.error(message);
     },
   });
-  if (error) return null;
-
+  
   const subscribeToMoreMessages = (conversationId: string) => {
     subscribeToMore({
       document: MessageOperaions.Subscription.messegeSent,
@@ -41,7 +40,7 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
         console.log("SUBCRIPTION MESSAGES:🔥", subscriptionData);
         const newMessage = subscriptionData.data.messageSent;
         return Object.assign({}, prev, {
-          messages: [newMessage, ...prev.messages],
+          messages:newMessage.sender.id === userId ? prev.messages: [newMessage, ...prev.messages],
         });
       },
     });
@@ -50,6 +49,7 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
   useEffect(() => {
     subscribeToMoreMessages(conversationId);
   }, [conversationId]);
+  if (error) return null;
   return (
     <Flex direction={"column"} justify="flex-end" overflow={"hidden"}>
       {loading && (
@@ -59,9 +59,30 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
         </Stack>
       )}
       {data?.messages && (
-        <Flex direction={"column-reverse"} overflowY="scroll" height={"100%"}>
+        <Flex
+          direction={"column-reverse"}
+          overflowY="scroll"
+          css={{
+            "&::-webkit-scrollbar": {
+              width: "4px",
+            },
+            "&::-webkit-scrollbar-track": {
+              width: "6px",
+              background:"transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "grey",
+              borderRadius: "24px",
+            },
+          }}
+          height={"100%"}
+        >
           {data.messages.map((message) => (
-            <MessageItem message={message} sentByMe={message.sender.id === userId}/>
+            <MessageItem
+              key={message.id}
+              message={message}
+              sentByMe={message.sender.id === userId}
+            />
             // <div>{message.body}</div>
           ))}
         </Flex>

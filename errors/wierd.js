@@ -2,6 +2,8 @@
  * Prisma Panic Attack:--
  * when using incognito or inPrivate window 
  * resolved: ❌
+ * it is marked a bug #prisma/prisma issues #15745
+ * hacks: # use a stable version 4.0.0 of prisma and @prisma/client 
  * */ 
 
 /**
