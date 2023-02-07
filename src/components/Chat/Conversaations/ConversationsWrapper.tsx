@@ -7,6 +7,7 @@ import { ConverationData } from "@/src/util/types";
 import { ConversationPopulated } from "@/../backend/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import SkeletonLoader from "../../common/SkeletonLoader";
 interface IConversationsWrapperProps {
   session: Session;
 }
@@ -19,21 +20,23 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
     error: conversationsError,
     loading: conversationsLoading,
     subscribeToMore,
-  } = useQuery<ConverationData, null>(
+  } = useQuery<ConverationData, {}>(
     ConversationOperations.Query.conversations
-    );
-    const router = useRouter();
-    const { query: {conversationId}} = router;
-    const onViewConversation = async (conversationId: string) => {
-      /**
-       * 1. push the conversationId to route query params
-       */
-      router.push({query: {conversationId}});
-      /**
-       * 2, Mark the conversation as read
-       */
-    }
-    console.log("HERE IS DATA FROM CONVERSATIONWRAPPER:📬", conversationsData);
+  );
+  const router = useRouter();
+  const {
+    query: { conversationId },
+  } = router;
+  const onViewConversation = async (conversationId: string) => {
+    /**
+     * 1. push the conversationId to route query params
+     */
+    router.push({ query: { conversationId } });
+    /**
+     * 2, Mark the conversation as read
+     */
+  };
+  console.log("HERE IS DATA FROM CONVERSATIONWRAPPER:📬", conversationsData);
   const subscribeToNewConversations = () => {
     subscribeToMore({
       document: ConversationOperations.Subscriptions.conversationCreated,
@@ -48,7 +51,7 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
         }
       ) => {
         if (!subscriptionData.data) return prev;
-        console.log("HERE IS SUBSCRIPTION DATA:🧧🎟️♨️",subscriptionData);
+        console.log("HERE IS SUBSCRIPTION DATA:🧧🎟️♨️", subscriptionData);
         const newConversation = subscriptionData.data.conversationCreated;
         return Object.assign({}, prev, {
           conversations: [newConversation, ...prev.conversations],
@@ -56,25 +59,31 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
       },
     });
   };
-  
 
-  useEffect(()=>{
+  useEffect(() => {
     subscribeToNewConversations();
-  },[]);
+  }, []);
 
   return (
     <Box
-      display={{base: conversationId ? "none" : "flex" , md: "flex"}}
+      display={{ base: conversationId ? "none" : "flex", md: "flex" }}
       width={{ base: "100%", md: "400px" }}
       bg={"whiteAlpha.50"}
+      flexDirection="column"
+      gap={4}
       py={6}
       px={3}
     >
-      <ConversationsList
-        session={session}
-        conversations={conversationsData?.conversations || []}
-        onViewConversation={onViewConversation}
-      />
+      {conversationsLoading ? (
+        <SkeletonLoader count={7} height="80px"/>
+        // <div>Loading</div>
+      ) : (
+        <ConversationsList
+          session={session}
+          conversations={conversationsData?.conversations || []}
+          onViewConversation={onViewConversation}
+        />
+      )}
     </Box>
   );
 };

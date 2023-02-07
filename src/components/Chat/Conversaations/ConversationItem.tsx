@@ -157,6 +157,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           textAlign="right"
           position="absolute"
           right={4}
+          fontSize={"2xs"}
         >
           {formatRelative(new Date(conversation.updatedAt), new Date(), {
             locale: {

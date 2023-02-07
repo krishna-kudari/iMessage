@@ -16,7 +16,7 @@ const MessagesHeader: React.FunctionComponent<IMessagesHeaderProps> = ({
   conversationId,
 }) => {
   const router = useRouter();
-  const { data, loading } = useQuery<ConverationData, null>(
+  const { data, loading } = useQuery<ConverationData, {}>(
     ConversationOperations.Query.conversations
   );
 

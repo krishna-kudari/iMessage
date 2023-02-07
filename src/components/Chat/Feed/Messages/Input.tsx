@@ -1,8 +1,12 @@
+import { useMutation } from "@apollo/client";
 import { Box, Input } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import React, { useState } from "react";
+// import { ObjectId } from "bson";
+var ObjectID = require('bson-objectid');
 import { toast } from "react-hot-toast";
-
+import MessageOperations from "@/src/graphql/operations/message";
+import { sendMessageArguments } from "@/../backend/src/util/types";
 interface MessageInputProps {
   session: Session;
   conversationId: string;
@@ -13,19 +17,43 @@ const MessageInput: React.FC<MessageInputProps> = ({
   conversationId,
 }) => {
   const [messageBody, setMessageBody] = useState("");
-    const onSendMessage = async (event: React.FormEvent) => {
-        event.preventDefault();
+  const [sendMessage] = useMutation<
+    { sendMessage: boolean },
+    sendMessageArguments
+  >(MessageOperations.Mutation.sendMessage);
+  const onSendMessage = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-        try{
-            // call sendMessage mutation
-        }catch(error:any){
-            console.log("onsendMessage error",error);
-            toast.error(error.message);
-        }
+    try {
+      // call sendMessage mutation
+      const {
+        user: { id: senderId },
+      } = session;
+      const messageId = ObjectID().toString();
+      const newMessage: sendMessageArguments = {
+        id: messageId,
+        senderId,
+        conversationId,
+        body: messageBody,
+      };
+
+      const {data , errors} = await sendMessage({
+        variables:{
+          ...newMessage,
+        },
+      });
+      if(!data?.sendMessage || errors){
+        throw new Error("failed to send message");
+      }
+    } catch (error: any) {
+      console.log("onsendMessage error", error);
+      toast.error(error.message);
     }
+  };
+
   return (
     <Box px={4} py={6} width="100%">
-      <form onSubmit={() => {}}>
+      <form onSubmit={onSendMessage}>
         <Input
           value={messageBody}
           onChange={(event) => setMessageBody(event.target.value)}
@@ -35,7 +63,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           _focus={{
             boxShadow: "none",
             border: "1px solid",
-            borderColor:"whiteAlpha.300"
+            borderColor: "whiteAlpha.300",
           }}
         />
       </form>
