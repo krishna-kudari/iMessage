@@ -159,7 +159,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           right={4}
           fontSize={"2xs"}
         >
-          {formatRelative(new Date(conversation.updatedAt), new Date(), {
+          {formatRelative(new Date(conversation?.latestMessage?.createdAt || conversation.createdAt), new Date(), {
             locale: {
               ...enUS,
               formatRelative: (token) =>
