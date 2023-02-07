@@ -99,27 +99,30 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           >
             Delete
           </MenuItem>
-          {/* {conversation.participants.length > 2 ? (
+          {conversation.participants.length > 2 ? (
             <MenuItem
               icon={<BiLogOut fontSize={20} />}
               onClick={(event) => {
                 event.stopPropagation();
                 // onLeaveConversation(conversation);
               }}
+              bg="#2d2d2d"
+            _hover={{ bg: "whiteAlpha.300" }}
             >
               Leave
             </MenuItem>
           ) : (
-            <MenuItem
-              icon={<MdDeleteOutline fontSize={20} />}
-              onClick={(event) => {
-                event.stopPropagation();
-                // onDeleteConversation(conversation.id);
-              }}
-            >
-              Delete
-            </MenuItem>
-          )} */}
+            // <MenuItem
+            //   icon={<MdDeleteOutline fontSize={20} />}
+            //   onClick={(event) => {
+            //     event.stopPropagation();
+            //     // onDeleteConversation(conversation.id);
+            //   }}
+            // >
+            //   Delete
+            // </MenuItem>
+            null
+          )}
         </MenuList>
       </Menu>
       <Flex position="absolute" left="-6px">

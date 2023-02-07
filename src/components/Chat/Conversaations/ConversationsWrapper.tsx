@@ -1,10 +1,13 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationsList from "./ConversationList";
 import ConversationOperations from "@/src/graphql/operations/conversation";
-import { ConverationData } from "@/src/util/types";
-import { ConversationPopulated, ParticipantPopulated } from "@/../backend/src/util/types";
+import { ConverationData, ConversationUpdatedData } from "@/src/util/types";
+import {
+  ConversationPopulated,
+  ParticipantPopulated,
+} from "@/../backend/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "../../common/SkeletonLoader";
@@ -20,7 +23,9 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
     query: { conversationId },
   } = router;
 
-  const{user:{id :userId}} = session;
+  const {
+    user: { id: userId },
+  } = session;
 
   const {
     data: conversationsData,
@@ -34,6 +39,25 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
     { userId: string; conversationId: string }
   >(ConversationOperations.Mutations.markConversationAsRead);
 
+  useSubscription<ConversationUpdatedData,{}>(
+    ConversationOperations.Subscriptions.conversationUpdated,
+    {
+      onData: ({ client, data}) => {
+
+        const {data: subscriptionData} = data;
+        console.log("CONVERSATION_UPDATED SUBSCRIPTION DATA",subscriptionData);
+        
+        if(!subscriptionData) return;
+        const{conversationUpdated :{conversation : updatedConversation}} = subscriptionData;
+
+        const currentlyViewingConversation = updatedConversation.id === conversationId;
+
+        if(currentlyViewingConversation) {
+          onViewConversation(conversationId,false);
+        }
+      }
+    }
+  );
   const onViewConversation = async (
     conversationId: string,
     hasSeenLatestMessage: boolean | undefined
@@ -50,7 +74,7 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
     //markconversationAsRead mutation
     try {
       await markconversationAsRead({
-        variables:{
+        variables: {
           userId,
           conversationId,
         },
@@ -61,7 +85,9 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
           /**
            * Get conversation participants from cache
            */
-          const participantsFragment = cache.readFragment<{ participants: Array<ParticipantPopulated>}>({
+          const participantsFragment = cache.readFragment<{
+            participants: Array<ParticipantPopulated>;
+          }>({
             id: `Conversation:${conversationId}`,
             fragment: gql`
               fragment Participants on Conversation {
@@ -73,16 +99,18 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
                   hasSeenLatestMessage
                 }
               }
-            `
+            `,
           });
 
-          if(!participantsFragment) return;
+          if (!participantsFragment) return;
 
           const participants = [...participantsFragment.participants];
-          
-          const userParticipantIdx = participants.findIndex(p => p.user.id === userId);
-          
-          if(userParticipantIdx === -1)return;
+
+          const userParticipantIdx = participants.findIndex(
+            (p) => p.user.id === userId
+          );
+
+          if (userParticipantIdx === -1) return;
 
           const userParticipant = participants[userParticipantIdx];
           /**
@@ -97,20 +125,20 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
            * update the cache
            */
           cache.writeFragment({
-            id:`Conversation:${conversationId}`,
+            id: `Conversation:${conversationId}`,
             fragment: gql`
               fragment UUpdatedParticipant on Conversation {
                 participants
               }
             `,
             data: {
-              participants
-            }
-          })
-        }
-      })
-    }catch(error) {
-      console.log("onViewConversationError:👁️",error)
+              participants,
+            },
+          });
+        },
+      });
+    } catch (error) {
+      console.log("onViewConversationError:👁️", error);
     }
   };
   console.log("HERE IS DATA FROM CONVERSATIONWRAPPER:📬", conversationsData);

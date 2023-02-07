@@ -28,6 +28,7 @@ const ConversationsList: React.FunctionComponent<IConversationsListProps> = ({
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
+  const sortedConversations = [...conversations].sort((a,b)=>b.updateAt.valueOf() - a.updateAt.valueOf());
   return (
     <Box>
       <Box
@@ -44,7 +45,7 @@ const ConversationsList: React.FunctionComponent<IConversationsListProps> = ({
         </Text>
       </Box>
       <ConversationModal session={session} isOpen={isOpen} onClose={onClose} />
-      {conversations.map((conversation) => {
+      {sortedConversations.map((conversation) => {
         const participant = conversation.participants.find(
           (p) => p.user.id === userId
         );
