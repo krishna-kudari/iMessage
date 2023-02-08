@@ -24,9 +24,9 @@ const MessagesHeader: React.FunctionComponent<IMessagesHeaderProps> = ({
     (conversation) => conversation.id === conversationId
   );
 
-  if (data?.conversations && !loading && !conversations) {
-    router.replace(process.env.NEXT_PUBLIC_BASE_URL as string);
-  }
+  // if (data?.conversations && !loading && !conversations) {
+  //   router.replace(process.env.NEXT_PUBLIC_BASE_URL as string);
+  // }
   return (
     <Stack
       direction={"row"}

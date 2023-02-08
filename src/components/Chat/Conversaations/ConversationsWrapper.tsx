@@ -3,7 +3,11 @@ import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationsList from "./ConversationList";
 import ConversationOperations from "@/src/graphql/operations/conversation";
-import { ConverationData, ConversationUpdatedData } from "@/src/util/types";
+import {
+  ConverationData,
+  ConversationDeletedData,
+  ConversationUpdatedData,
+} from "@/src/util/types";
 import {
   ConversationPopulated,
   ParticipantPopulated,
@@ -39,23 +43,54 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
     { userId: string; conversationId: string }
   >(ConversationOperations.Mutations.markConversationAsRead);
 
-  useSubscription<ConversationUpdatedData,{}>(
+  useSubscription<ConversationUpdatedData, {}>(
     ConversationOperations.Subscriptions.conversationUpdated,
     {
-      onData: ({ client, data}) => {
+      onData: ({ client, data }) => {
+        const { data: subscriptionData } = data;
+        console.log("CONVERSATION_UPDATED SUBSCRIPTION DATA", subscriptionData);
 
-        const {data: subscriptionData} = data;
-        console.log("CONVERSATION_UPDATED SUBSCRIPTION DATA",subscriptionData);
-        
-        if(!subscriptionData) return;
-        const{conversationUpdated :{conversation : updatedConversation}} = subscriptionData;
+        if (!subscriptionData) return;
+        const {
+          conversationUpdated: { conversation: updatedConversation },
+        } = subscriptionData;
 
-        const currentlyViewingConversation = updatedConversation.id === conversationId;
+        const currentlyViewingConversation =
+          updatedConversation.id === conversationId;
 
-        if(currentlyViewingConversation) {
-          onViewConversation(conversationId,false);
+        if (currentlyViewingConversation) {
+          onViewConversation(conversationId, false);
         }
-      }
+      },
+    }
+  );
+
+  useSubscription<ConversationDeletedData, {}>(
+    ConversationOperations.Subscriptions.conversationDeleted,
+    {
+      onData: ({ client, data }) => {
+        console.log("deleted data🚮🗑️", data);
+        const { data: subscriptionData } = data;
+        if (!subscriptionData) return;
+        const existing = client.readQuery<ConverationData>({
+          query: ConversationOperations.Query.conversations,
+        });
+        if (!existing) return;
+        const { conversations } = existing;
+        const {
+          conversationDeleted: { id: deletedConversationId },
+        } = subscriptionData;
+
+        client.writeQuery<ConverationData>({
+          query: ConversationOperations.Query.conversations,
+          data: {
+            conversations: conversations.filter(
+              (conversation) => conversation.id !== conversationId
+            ),
+          },
+        });
+        router.push("/");
+      },
     }
   );
   const onViewConversation = async (
@@ -172,7 +207,8 @@ const ConversationsWrapper: React.FC<IConversationsWrapperProps> = ({
   return (
     <Box
       display={{ base: conversationId ? "none" : "flex", md: "flex" }}
-      width={{ base: "100%", md: "400px" }}
+      width={{ base: "100%", md: "350px" }}
+      minWidth="350px"
       bg={"whiteAlpha.50"}
       flexDirection="column"
       gap={4}

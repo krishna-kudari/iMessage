@@ -52,6 +52,12 @@ export interface ConversationUpdatedData {
     conversation: ConversationPopulated;
   }
 }
+
+export interface ConversationDeletedData {
+  conversationDeleted: {
+    id: string;
+  }
+}
 /**
  * Messages
  */

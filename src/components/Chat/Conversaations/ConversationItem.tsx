@@ -15,7 +15,6 @@ import { GoPrimitiveDot } from "react-icons/go";
 import { MdDeleteOutline } from "react-icons/md";
 import { BiLogOut } from "react-icons/bi";
 import { AiOutlineEdit } from "react-icons/ai";
-// import { formatUsernames } from "../../../util/functions";
 import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import { formatUsernames } from "@/src/util/functions";
 
@@ -32,7 +31,7 @@ interface ConversationItemProps {
   onClick: () => void;
   isSelected: boolean;
   hasSeenLatestMessage: boolean | undefined;
-  // onDeleteConversation: (conversationId: string) => void;
+  onDeleteConversation: (conversationId: string) => void;
   //   onEditConversation?: () => void;
   //   hasSeenLatestMessage?: boolean;
   //   selectedConversationId?: string;
@@ -45,7 +44,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   onClick,
   isSelected,
   hasSeenLatestMessage,
-  // onDeleteConversation,
+  onDeleteConversation,
   //   selectedConversationId,
   //   onEditConversation,
   //   onLeaveConversation,
@@ -74,6 +73,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       onClick={handleClick}
       onContextMenu={handleClick}
       position="relative"
+      width={"100%"}
     >
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)}>
         <MenuList bg="#2d2d2d">
@@ -92,14 +92,14 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             icon={<MdDeleteOutline fontSize={20} />}
             onClick={(event) => {
               event.stopPropagation();
-              // onDeleteConversation(conversation.id);
+              onDeleteConversation(conversation.id);
             }}
             bg="#2d2d2d"
             _hover={{ bg: "whiteAlpha.300" }}
           >
             Delete
           </MenuItem>
-          {conversation.participants.length > 2 ? (
+          {conversation.participants.length > 2 && (
             <MenuItem
               icon={<BiLogOut fontSize={20} />}
               onClick={(event) => {
@@ -107,21 +107,10 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                 // onLeaveConversation(conversation);
               }}
               bg="#2d2d2d"
-            _hover={{ bg: "whiteAlpha.300" }}
+              _hover={{ bg: "whiteAlpha.300" }}
             >
               Leave
             </MenuItem>
-          ) : (
-            // <MenuItem
-            //   icon={<MdDeleteOutline fontSize={20} />}
-            //   onClick={(event) => {
-            //     event.stopPropagation();
-            //     // onDeleteConversation(conversation.id);
-            //   }}
-            // >
-            //   Delete
-            // </MenuItem>
-            null
           )}
         </MenuList>
       </Menu>
@@ -130,7 +119,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           <GoPrimitiveDot fontSize={18} color="#6B46C1" />
         )}
       </Flex>
-      <Avatar name={conversation.participants[0].user.username||undefined} />
+      <Avatar name={conversation.participants[0].user.username || undefined} />
       <Flex justify="space-between" width="80%" height="100%">
         <Flex direction="column" width="70%" height="100%">
           <Text
@@ -162,15 +151,21 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           right={4}
           fontSize={"2xs"}
         >
-          {formatRelative(new Date(conversation?.latestMessage?.createdAt || conversation.createdAt), new Date(), {
-            locale: {
-              ...enUS,
-              formatRelative: (token) =>
-                formatRelativeLocale[
-                  token as keyof typeof formatRelativeLocale
-                ],
-            },
-          })}
+          {formatRelative(
+            new Date(
+              conversation?.latestMessage?.createdAt || conversation.createdAt || new Date(Date.now())
+            ),
+            new Date(),
+            {
+              locale: {
+                ...enUS,
+                formatRelative: (token) =>
+                  formatRelativeLocale[
+                    token as keyof typeof formatRelativeLocale
+                  ],
+              },
+            }
+          )}
         </Text>
       </Flex>
     </Stack>

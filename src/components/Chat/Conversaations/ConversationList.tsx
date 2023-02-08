@@ -1,17 +1,24 @@
 import { ConversationPopulated } from "@/../backend/src/util/types";
-import { Box, Text } from "@chakra-ui/react";
+import { iMessageLogo } from "@/public";
+import { useMutation } from "@apollo/client";
+import { Box, Button, Image, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { useState } from "react";
 import ConversationItem from "./ConversationItem";
 import ConversationModal from "./Modal/Modal";
+import ConverdsationOperations from "@/src/graphql/operations/conversation";
+import { toast } from "react-hot-toast";
+import { signOut } from "next-auth/react";
+import { FiLogOut } from "react-icons/fi";
+
 interface IConversationsListProps {
   session: Session;
   conversations: Array<ConversationPopulated>;
   onViewConversation: (
     conversationId: string,
-    hasSeenLatestMessage: boolean | undefined,
+    hasSeenLatestMessage: boolean | undefined
   ) => void;
 }
 
@@ -28,21 +35,72 @@ const ConversationsList: React.FunctionComponent<IConversationsListProps> = ({
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const sortedConversations = [...conversations].sort((a,b)=>b.updateAt.valueOf() - a.updateAt.valueOf());
+  const [deleteConversation] = useMutation<
+    {
+      deleteConversation: boolean;
+    },
+    {
+      conversationId: string;
+    }
+  >(ConverdsationOperations.Mutations.deleteConversation);
+
+  const onDeleteConversation = async (conversationId: string) => {
+    console.log("ondelete called", conversationId);
+    try {
+      toast.promise(
+        deleteConversation({
+          variables: {
+            conversationId,
+          },
+          update: () => {
+            router.replace(
+              typeof process.env.NEXT_PUBLIC_BASE_URL === "string"
+                ? process.env.NEXT_PUBLIC_BASE_URL
+                : ""
+            );
+          },
+        }),
+        {
+          loading: "Deleting conversation",
+          success: "Conversation Deleted",
+          error: "Failed to delete conversation",
+        }
+      );
+    } catch (error: any) {
+      console.log("onDeleteconversation ERROR", error);
+      throw new Error(error.message);
+    }
+  };
+
+  const sortedConversations = [...conversations].sort(
+    (a, b) => b.updateAt.valueOf() - a.updateAt.valueOf()
+  );
+
   return (
-    <Box>
+    <Box width={"100%"} position="relative" height={"100%"}>
       <Box
-        py={2}
-        px={4}
         mb={4}
-        bg={"blackAlpha.300"}
         borderRadius={4}
         cursor={"pointer"}
         onClick={onOpen}
+        display="flex"
+        flexDirection="row"
+        alignItems={"center"}
+        mt={-4}
       >
-        <Text textAlign={"center"} color="whiteAlpha.800">
-          Find or start a Conversaation
-        </Text>
+        <Image src={iMessageLogo.src} height="50px"></Image>
+        <Box height="40px" flexGrow={1} overflow={"hidden"} px={2} py={1}>
+          <Text
+            bg={"blackAlpha.300"}
+            py={2}
+            px={4}
+            borderRadius={4}
+            textAlign={"center"}
+            color="whiteAlpha.800"
+          >
+            Find or start a Conversation
+          </Text>
+        </Box>
       </Box>
       <ConversationModal session={session} isOpen={isOpen} onClose={onClose} />
       {sortedConversations.map((conversation) => {
@@ -62,12 +120,19 @@ const ConversationsList: React.FunctionComponent<IConversationsListProps> = ({
             conversation={conversation}
             isSelected={conversation.id === router.query.conversationId}
             hasSeenLatestMessage={participant?.hasSeenLatestMessage}
-            // onDeleteConversation={function (conversationId: string): void {
-            //   throw new Error("Function not implemented.");
-            // }}
+            onDeleteConversation={onDeleteConversation}
           />
         );
       })}
+      <Box position={"absolute"} bottom={0} left={0} px="6" width="100%">
+        <Button
+          width={"100%"}
+          onClick={() => signOut()}
+          leftIcon={<FiLogOut></FiLogOut>}
+        >
+          Logout
+        </Button>
+      </Box>
     </Box>
   );
 };
