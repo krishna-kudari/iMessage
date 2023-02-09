@@ -15,7 +15,8 @@ import { GoPrimitiveDot } from "react-icons/go";
 import { MdDeleteOutline } from "react-icons/md";
 import { BiLogOut } from "react-icons/bi";
 import { AiOutlineEdit } from "react-icons/ai";
-import { ConversationPopulated } from "../../../../../backend/src/util/types";
+// import { ConversationPopulated } from "../../../../../backend/src/util/types";
+import { ConversationPopulated } from "@/src/util/types";
 import { formatUsernames } from "@/src/util/functions";
 
 const formatRelativeLocale = {

@@ -1,4 +1,5 @@
-import { ConversationPopulated } from "@/../backend/src/util/types";
+// import { ConversationPopulated } from "@/../backend/src/util/types";
+import { ConversationPopulated } from "@/src/util/types";
 import { iMessageLogo } from "@/public";
 import { useMutation } from "@apollo/client";
 import { Box, Button, Image, Text } from "@chakra-ui/react";

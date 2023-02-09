@@ -1,4 +1,5 @@
-import { MessagePopulated } from "@/../backend/src/util/types";
+// import { MessagePopulated } from "@/../backend/src/util/types";
+import { MessagePopulated } from "@/src/util/types";
 import { Avatar, Box, Flex, Stack, Text } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import { enUS } from "date-fns/locale";
@@ -26,7 +27,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, sentByMe }) => {
     >
       {!sentByMe && (
         <Flex>
-          <Avatar name={message.sender.username}  size={"sm"} />
+          <Avatar name={message.sender.username || undefined}  size={"sm"} />
         </Flex>
       )}
       <Stack spacing={1} width={"100%"}>

@@ -9,9 +9,10 @@ import {
   ConversationUpdatedData,
 } from "@/src/util/types";
 import {
-  ConversationPopulated,
+  // ConversationPopulated,
   ParticipantPopulated,
 } from "@/../backend/src/util/types";
+import { ConversationPopulated } from "@/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "../../common/SkeletonLoader";
