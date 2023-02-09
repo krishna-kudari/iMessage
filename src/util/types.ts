@@ -1,7 +1,7 @@
-import {
-  ConversationPopulated,
-  MessagePopulated,
-} from "../../../backend/src/util/types";
+// import {
+  // ConversationPopulated,
+  // MessagePopulated
+// } from "../../../backend/src/util/types";
 
 /*
  * Users
@@ -34,6 +34,30 @@ export interface SearchedUser {
 /* Converation
  */
 
+export interface ParticipantPopulated {
+  hasSeenLatestMessage: boolean;
+  user: {
+    id: string;
+    username: string;
+  },
+}
+export interface Message {
+  body:string;
+  createdAt: Date;
+  id: string;
+  sender: {
+    id: string;
+    username: string;
+  }
+}
+export interface ConversationPopulated {
+    id: string;
+    participants: Array<ParticipantPopulated>;
+    latestMessage: Message | null;
+    updateAt: Date;
+    createdAt: Date;
+}
+
 export interface ConverationData {
   conversations: Array<ConversationPopulated>;
 }
@@ -58,10 +82,23 @@ export interface ConversationDeletedData {
     id: string;
   }
 }
+
 /**
  * Messages
  */
 
+export interface MessagePopulated {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  body: string;
+  createdAt: Date;
+  updateAt: Date;
+  sender: {
+    id: string;
+    username: string | null;
+};
+}
 export interface MessagesData {
   messages: Array<MessagePopulated>;
 }
