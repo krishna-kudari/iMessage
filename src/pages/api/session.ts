@@ -8,6 +8,8 @@ export default async function handler(
   res: NextApiResponse<Session | null>
 ) {
   try {
+    console.log("SESSIONAPI REQ",req.headers);
+    
     const session = await getSession({ req });
     console.log("SESSION FROM API ROUTE:⚡😍", session);
     res.status(200).json(session);
