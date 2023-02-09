@@ -8,11 +8,11 @@ import {
   ConversationDeletedData,
   ConversationUpdatedData,
 } from "@/src/util/types";
-import {
+// import {
   // ConversationPopulated,
-  ParticipantPopulated,
-} from "@/../backend/src/util/types";
-import { ConversationPopulated } from "@/src/util/types";
+  // ParticipantPopulated,
+// } from "@/../backend/src/util/types";
+import { ConversationPopulated , ParticipantPopulated} from "@/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "../../common/SkeletonLoader";

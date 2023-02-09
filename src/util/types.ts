@@ -1,7 +1,8 @@
 // import {
-  // ConversationPopulated,
-  // MessagePopulated
+//   ConversationPopulated,
+//   MessagePopulated
 // } from "../../../backend/src/util/types";
+
 
 /*
  * Users
@@ -88,6 +89,7 @@ export interface ConversationDeletedData {
  */
 
 export interface MessagePopulated {
+  __typename: "Message";
   id: string;
   conversationId: string;
   senderId: string;
@@ -113,4 +115,11 @@ export interface MessageSubscriptionData {
       messageSent: MessagePopulated;
     };
   };
+}
+
+export interface sendMessageArguments {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  body: string;
 }
