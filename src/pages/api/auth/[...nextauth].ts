@@ -30,6 +30,7 @@ export const authOptions = {
       return { ...session, user: { ...session.user, ...user } };
     },
   },
+  // useSecureCookies: false,
 };
 
 export default NextAuth(authOptions);
