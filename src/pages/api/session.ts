@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession} from "next-auth/next";
 import { Session } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
+import { getSession } from "next-auth/react";
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,7 +12,7 @@ export default async function handler(
   try {
     console.log("SESSIONAPI REQ",req.headers);
     
-    const session = await getServerSession(req, res, authOptions)
+    const session = await getSession();
     console.log("SESSION FROM API ROUTE:⚡😍", session);
     res.status(200).json(session);
   } catch (error:any) {
