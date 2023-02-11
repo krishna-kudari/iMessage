@@ -23,7 +23,7 @@ const Auth: React.FC<IAuthProps> = ({session , reloadSession}) => {
         if(!username)return ;
         try {
             // createUsername  mutation to send our username to GRApHQL API
-            const { data } = await createUsername({ variables: { username } });
+            const { data } = await createUsername({ variables: { username } ,context:{session:session}});
             if(!data?.createUsername){
                 throw new Error();
             }
