@@ -16,7 +16,7 @@ const wsLink =
   typeof window != "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: "ws://chatservice-production.up.railway.app/graphql/subscriptions",
+          url: "https://chatservice-production.up.railway.app/graphql/subscriptions",
           // url: "ws://localhost:4000/graphql/subscriptions",
           connectionParams: async () => ({
             session: await getSession(),
