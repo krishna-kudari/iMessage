@@ -33,17 +33,10 @@
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
+    <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -88,35 +81,62 @@ To run the application on your local machine, follow these steps:
 - Start the frontend using npm run dev.
 - You will need to have Node.js installed on your local machine to run the application.
 
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
 🚀 Our application is currently deployed and available for use. To access the application, please follow the steps below:
 
-- 🌐 Go to [imessage].
-- 🙋‍♀️ If you do not have an account, click on the "Sign up" button to create an account.
-- 🔑 If you already have an account, click on the "Log in" button to log in to your account.
-- 🎟️🎫 If you do not have a username, create a 🕶️🔥 cool one. 
-- 💬 Once you are logged in, you can start using the application by creating a new conversation, or messaging other users in the application.
+### 🌐 Go to [imessage].
+
+### 🙋‍♀️ Signin with Google.🎟️🎫 If you do not have a username, create a 🕶️🔥 cool one.
+
+![signin](./public/demo/signin_username.png)
+
+### 💬 you can start using the application by creating a new conversation, or messaging other users in the application.
+
+![create conversation](./public/demo/create-c.png)
+
+![chat](./public/demo/demo-convesation-unmarked.png)
+![chat](./public/demo/demo-conversation-marked.png)
+
+### delete conversation when you want.
+
+![chat](./public/demo/demo-delete-conversation.png)
+
 - 📧 If you have any issues or questions about the application, please reach out to me at [email].
 
 🎉 Thank you for using our application! We hope you enjoy your experience.
 <p align="right">(<a href="#readme">back to top</a>)</p>
 
 
-
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [x] authenticate users
+    - [x] signin
+    - [x] costum username
+    - [x] logout
+- [ ] conversation
+    - [x] 🔍 by username
+    - [x] select multiple users
+    - [x] create conversation
+    - [ ] edit conversation
+        - [ ] leave conversation
+        - [x] delete conversation
+    - [x] conversation marked unread
+    - [x] latest message
+ - [ ] chat 
+  - [x] send message
+  - [x] recieve message automatically
+  - [x] emoji support[press 🪟➕⚫ for emoji]
+  - [ ] GIF
+  - [ ] messsage status
+  - [ ] files sharing
+  - [ ] reply messages
 
 See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme">back to top</a>)</p>
 
 
 
@@ -147,18 +167,21 @@ Project Links:
 | -------- | ------- |
 |[https://github.com/KRISHNAGK9964/iMessage](imessage) | [https://github.com/KRISHNAGK9964/chatService](chatService)|
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme">back to top</a>)</p>
 
 
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* [Next-auth Documentation](https://next-auth.js.org/getting-started/introduction)
+* [Chakra UI Documentation](https://chakra-ui.com/docs/styled-system/style-props)
+* [Prisma Docs](https://www.prisma.io/docs)
+* [Apollo-client Docs](https://www.apollographql.com/docs/react)
+* [Apollo-server documentation](https://www.apollographql.com/docs/apollo-server)
+* [how to Graphql](https://www.howtographql.com/)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme">back to top</a>)</p>
 
 
 
