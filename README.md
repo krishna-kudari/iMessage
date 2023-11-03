@@ -11,6 +11,7 @@
     An awesome Real Time Chat Apllication 🙋‍♂️👋⚡🔥💬🗨️Ⓜ️
     <br />
     <a href="https://github.com/KRISHNAGK9964/chatService"><strong>Backend chatService»</strong></a>
+    <p> [ backend hosting is paused as free trial got over ] </p>
     <br />
     <br />
     <a href="https://github.com/KRISHNAGK9964/iMessage">View Demo</a>
