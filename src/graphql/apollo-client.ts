@@ -7,8 +7,8 @@ import { setContext } from '@apollo/client/link/context';
 
 const httpLink = new HttpLink({
   // uri: "http://localhost:4000/graphql",
-  // uri: "https://chatservice-2u9j.onrender.com/graphql",
-  uri: "https://chatservice-production.up.railway.app/graphql",
+  uri: "https://chatservice-2u9j.onrender.com/graphql",
+  // uri: "https://chatservice-production.up.railway.app/graphql",
   credentials: "include",
 });
 
@@ -16,7 +16,8 @@ const wsLink =
   typeof window != "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: "wss://chatservice-production.up.railway.app/graphql/subscriptions",
+          // url: "wss://chatservice-production.up.railway.app/graphql/subscriptions",
+          url: "wss://chatservice-2u9j.onrender.com/graphql/subscriptions",
           // url: "ws://localhost:4000/graphql/subscriptions",
           connectionParams: async () => ({
             session: await getSession(),
